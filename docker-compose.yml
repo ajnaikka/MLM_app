@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=loyal
+      - POSTGRES_USER=loyal
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    container_name: backend_container
+    ports: 
+      - "8000:8000"
+    depends_on: 
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=postgres
+      - DB_USER=loyal
+      - DB_PASSWORD=loyal
+
+  frontend: 
+    build:
+      context: ./frontend
+    container_name: frontend_container
+    ports: 
+      - "3000:3000"
+
+volumes:
+  postgres_data:
